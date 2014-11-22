@@ -11,30 +11,35 @@ board_size  = 4
 # end
 
 
-# array = ["t","h","a","n","e","f","d","g","h","l","l","f","m","o","n","u"]
+array = ["t","h","a","n","e","f","d","k","h","l","l","f","m","o","n","u"]
 
 
-letters = ('a'..'z').to_a
-array = []
+
+
+
+
+# letters = ('a'..'z').to_a
+# array = []
 x = 16
 
-x.times {array.push(letters.sample)}
+# x.times {array.push(letters.sample)}
 
 matched_words = []
 
 def is_word(word)
-  words = ["the", "and", "hello", "fun"]
+  words = ["the", "and", "hello", "fun", "tune", "thankful"]
   words.include? word
 end
 
-(3..x).flat_map{|size| array.combination(size).to_a }.each do |x|
-  matched_words.push(x.join()) if is_word(x.join())
+
+x.times do
+  (3..x).flat_map{|size| array.combination(size).to_a }.each do |x|
+    matched_words.push(x.join()) if is_word(x.join())
+  end
+  array.rotate!
 end
 
-
-
-
-
+puts matched_words.uniq
 binding.pry
 
 
