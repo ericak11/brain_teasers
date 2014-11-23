@@ -64,31 +64,33 @@ def get_coordinates(index, board_size)
   coordinates_array
 end
 
-def make_words(index, hash, size)
-  matched_words = []
-  words = []
-  valid = true
+# def make_words(index, hash, size)
+#   matched_words = []
+#   words = []
+#   valid = true
 
-  if  words.length > 0
-    words.each_with_index do |word|
-      if word.length >= 3
-        matched_words.push(word) if is_word(word)
-      end
-      last_place = hash.key(word[-1])
-      coor_array = get_coordinates(last_place, size)
-      coor_array.each do |spot|
-        words.push(hash[last_place] + hash[spot])
-      end
-    end
-  else
-    coor_array = get_coordinates(index, size)
-    coor_array.each do |spot|
-      binding.pry
-      words.push(hash[index] + hash[spot])
-    end
-  end
+#   if  words.length > 0
+#     words.each_with_index do |word|
+#       if word.length >= 3
+#         matched_words.push(word) if is_word(word)
+#       end
+#       last_place = hash.key(word[-1])
+#       coor_array = get_coordinates(last_place, size)
+#       coor_array.each do |spot|
+#         words.push(hash[last_place] + hash[spot])
+#       end
+#     end
+#   else
+#     coor_array = get_coordinates(index, size)
+#     coor_array.each do |spot|
+#       binding.pry
+#       words.push(hash[index] + hash[spot])
+#     end
+#   end
 
-end
+# end
 
 
-make_words(1, board_hash, board_size)
+# make_words(1, board_hash, board_size)
+
+puts get_coordinates(1, 4)

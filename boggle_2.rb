@@ -1,74 +1,113 @@
+# What is the reasoning behind your approach?
+# Although this approach takes a long time to execute I liked the simplicity of the code
+#
+# What strategy did you choose and why?
+# I chose to find all possible combinations of letters and then from that see if the words match the dicitonary.
+# If the word matches the dictionary it is then evaluated to see if it is possible on a boggle board based on the relationship
+# in placement between each letter
+#
+# Would this solution scale with larger boards?
+# This would scale to larger (or smaller boards). but would take exponentially more time to run.
+
+
 require 'pry'
-# letters = ('a'..'z').to_a
-# array = []
 board_size  = 4
+letters = ('a'..'z').to_a
+array = []
+x = board_size ** 2
 
+x.times do
+  letter = letters.sample
+  array.push(letter)
+  letters.delete(letter)
+end
 
-# board_size .times do
-#   inner_array = []
-#   board_size .times {inner_array.push(letters.sample)}
-#   array.push(inner_array)
-# end
+board_hash = {}
 
-
-array = ["t","h","a","n","e","f","d","k","h","l","l","f","m","o","n","u"]
-
-
-
-
-
-
-# letters = ('a'..'z').to_a
-# array = []
-x = 16
-
-# x.times {array.push(letters.sample)}
+array.each_with_index { |letter, index|  board_hash[index + 1] = letter  }
 
 matched_words = []
 
-def is_word(word)
-  words = ["the", "and", "hello", "fun", "tune", "thankful"]
-  words.include? word
+def is_word(word, dictionary)
+  dictionary[word[0,3]].include? word
 end
 
-
-x.times do
-  (3..x).flat_map{|size| array.combination(size).to_a }.each do |x|
-    matched_words.push(x.join()) if is_word(x.join())
+def get_dictionary
+  dict = Hash.new{|hash, key| hash[key] = []}
+  File.open('dictionary.txt').each do |row|
+    word = row.strip.downcase
+    if word.length >= 3
+      first_letters =  word[0,3]
+      dict[first_letters] << word
+    end
   end
-  array.rotate!
+  dict
 end
 
-puts matched_words.uniq
-binding.pry
+
+def is_right(index, size)
+  index % size == 0
+end
+
+def is_left(index, size)
+  index % size == 1
+end
+
+def get_coordinates(index, board_size, array)
+  coordinates_array = []
+  if index <= board_size
+    if is_right(index, board_size)
+      coordinates_array = [index - 1, index + (board_size), index + (board_size - 1)]
+    elsif is_left(index, board_size)
+      coordinates_array = [index + 1, index + (board_size), index + (board_size + 1)]
+    else
+      coordinates_array = [index + 1, index - 1, index + (board_size), index + (board_size + 1), index + (board_size - 1)]
+    end
+  elsif index >= array.length - board_size
+    if is_right(index, board_size)
+      coordinates_array = [index - 1, index - (board_size), index - (board_size - 1)]
+    elsif is_left(index, board_size)
+      coordinates_array = [index + 1, index - (board_size), index - (board_size + 1)]
+    else
+      coordinates_array = [index + 1, index - 1, index - (board_size), index - (board_size + 1), index - (board_size - 1)]
+    end
+  else
+    if is_right(index, board_size)
+      coordinates_array = [index - 1, index - (board_size), index - (board_size - 1), index + (board_size), index + (board_size - 1)]
+    elsif is_left(index, board_size)
+      coordinates_array = [index + 1, index - (board_size), index - (board_size + 1), index + (board_size), index + (board_size - 1)]
+    else
+      coordinates_array = [index + 1, index - 1, index + (board_size), index + (board_size + 1), index + (board_size - 1), index - (board_size), index - (board_size + 1), index - (board_size - 1)]
+    end
+  end
+  coordinates_array
+end
+
+dictionary = get_dictionary
+puts "dict loaded"
+(3..6).flat_map{|size| array.permutation(size).to_a }.map do |x|
+  matched_words.push(x.join()) if is_word(x.join(), dictionary)
+end
+puts "3 - 7 RUN"
+
+word_list = []
+matched_words.each do |word|
+  word_nums = []
+  word.chars.each do |letter|
+    word_nums.push(board_hash.invert[letter])
+  end
+  if word_nums.uniq.length == word_nums.length
+    word_nums.each_with_index do |num, index|
+      if index < word_nums.length - 1
+        coordinates = get_coordinates(num, board_size, array)
+        break if !coordinates.include? word_nums[index + 1]
+      else
+        word_list.push(word)
+      end
+    end
+  end
+end
 
 
-# # You are given a 4x4 grid of characters
-# # Given that you have a method ‘is_word’ that returns a boolean, return a list of all possible words that can be created, by chaining adjacent letters using the following rules:
-# # The letters in the word must be adjacent to each other
-# # “Adjacent” can be defined as a letter that lies within one position, horizontally, vertically or diagonally of the current position.
-# # Once a letter is used in a word, it cannot be reused in the same word. The letter can be reused however, in different words
-# # A word consists of 3 or more letters in order to be valid
+puts word_list
 
-# def make_words(array, x, y, size)
-#   matched_words = []
-#   word = ""
-#   counter = 0
-#   while x < size && y < size
-#     word += array[x][y]
-#     array[x][y] = nil
-#     if is_word(word)
-#       matched_words.push(word)
-#     end
-#     counter.even? ? x += 1 : y += 1
-#     counter +=  1
-#   end
-#   binding.pry
-# end
-
-
-
-
-
-
-# make_words(array,0,0, board_size)
