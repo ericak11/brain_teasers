@@ -1,6 +1,8 @@
 # What is the reasoning behind your approach?
 # Although this approach takes a long time to execute I liked the simplicity of the code
-#
+# If I had more time to complete this challenge. I would adjust the code so that instead of permutating all of the possibilities it would
+# instead only caluclulate values of possible routes
+
 # What strategy did you choose and why?
 # I chose to find all possible combinations of letters and then from that see if the words match the dicitonary.
 # If the word matches the dictionary it is then evaluated to see if it is possible on a boggle board based on the relationship
